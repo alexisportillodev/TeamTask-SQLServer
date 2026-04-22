@@ -177,6 +177,12 @@
   padding: 20px;
 }
 
+.modal-body .form {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px;
+}
+
 .btn {
   padding: 10px 16px;
   border: none;

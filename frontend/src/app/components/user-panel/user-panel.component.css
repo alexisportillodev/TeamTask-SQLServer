@@ -20,7 +20,7 @@ h2 {
 
 .form {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr;
   gap: 12px;
   align-items: end;
   margin-bottom: 12px;
