@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../../services/task.service';
@@ -15,6 +15,8 @@ export class TaskFormComponent {
   private readonly tasks = inject(TaskService);
   private readonly users = inject(UserService);
 
+  readonly onClose = input<() => void>(() => {});
+  readonly isFormOnly = input<boolean>(false);
   readonly isSubmitting = signal(false);
 
   readonly form = new FormGroup({
@@ -44,6 +46,7 @@ export class TaskFormComponent {
         next: () => {
           this.form.reset({ title: '', description: null, userId: null, additionalData: null });
           this.isSubmitting.set(false);
+          this.onClose()();
         },
         error: () => this.isSubmitting.set(false),
       });

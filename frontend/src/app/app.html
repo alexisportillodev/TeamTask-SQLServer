@@ -7,17 +7,67 @@
         <div class="subtitle">Angular 20 + Signals · .NET API</div>
       </div>
     </div>
+    <nav class="tabs">
+      <button 
+        class="tab" 
+        [class.active]="activeTab() === 'users'"
+        (click)="switchTab('users')">
+        Users
+      </button>
+      <button 
+        class="tab" 
+        [class.active]="activeTab() === 'tasks'"
+        (click)="switchTab('tasks')">
+        Tasks
+      </button>
+    </nav>
   </header>
 
-  <main class="grid">
-    <div class="col">
-      <app-user-panel />
-      <app-task-form />
-    </div>
-    <div class="col">
-      <app-task-list />
-    </div>
+  <main class="content">
+    @if (activeTab() === 'users') {
+      <div class="section">
+        <app-user-panel [isFormOnly]="false" />
+        <button class="btn btn-primary" (click)="openFormModal()">New User</button>
+      </div>
+    }
+
+    @if (activeTab() === 'tasks') {
+      <div class="section">
+        <app-task-list />
+        <button class="btn btn-primary" (click)="openFormModal()">New Task</button>
+      </div>
+    }
   </main>
+
+  <!-- Modal for Task Form -->
+  @if (showFormModal() && activeTab() === 'tasks') {
+    <div class="modal-overlay" (click)="closeFormModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Create New Task</h2>
+          <button class="close-btn" (click)="closeFormModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <app-task-form [isFormOnly]="true" [onClose]="closeFormModal" />
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal for User Form -->
+  @if (showFormModal() && activeTab() === 'users') {
+    <div class="modal-overlay" (click)="closeFormModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Create New User</h2>
+          <button class="close-btn" (click)="closeFormModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <app-user-panel [isFormOnly]="true" [onClose]="closeFormModal" />
+        </div>
+      </div>
+    </div>
+  }
 </div>
 
 

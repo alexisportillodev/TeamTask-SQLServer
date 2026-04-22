@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../services/user.service';
@@ -13,6 +13,8 @@ import { UserService } from '../../services/user.service';
 export class UserPanelComponent {
   private readonly users = inject(UserService);
 
+  readonly onClose = input<() => void>(() => {});
+  readonly isFormOnly = input<boolean>(false);
   readonly isSubmitting = signal(false);
 
   readonly form = new FormGroup({
@@ -37,6 +39,7 @@ export class UserPanelComponent {
       next: () => {
         this.form.reset({ name: '', email: '' });
         this.isSubmitting.set(false);
+        this.onClose()();
       },
       error: () => this.isSubmitting.set(false),
     });

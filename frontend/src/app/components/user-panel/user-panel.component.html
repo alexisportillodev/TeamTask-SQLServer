@@ -1,38 +1,40 @@
-<section class="card">
-  <header class="header">
-    <h2>Users</h2>
-    <button type="button" class="btn btn-secondary" (click)="refresh()">Refresh</button>
-  </header>
-
+@if (isFormOnly()) {
   <form class="form" [formGroup]="form" (ngSubmit)="submit()">
     <label class="field">
-      <span>Name</span>
+      <span>Name *</span>
       <input type="text" formControlName="name" placeholder="Jane Doe" />
     </label>
 
     <label class="field">
-      <span>Email</span>
+      <span>Email *</span>
       <input type="email" formControlName="email" placeholder="jane@company.com" />
     </label>
 
-    <button class="btn" type="submit" [disabled]="form.invalid || isSubmitting()">
+    <button class="btn btn-submit" type="submit" [disabled]="form.invalid || isSubmitting()">
       Create user
     </button>
   </form>
+} @else {
+  <section class="card">
+    <header class="header">
+      <h2>Users</h2>
+      <button type="button" class="btn btn-secondary" (click)="refresh()">Refresh</button>
+    </header>
 
-  <div class="list">
-    @if (usersList.length === 0) {
-      <p class="muted">No users yet.</p>
-    } @else {
-      <ul>
-        @for (u of usersList; track u.id) {
-          <li>
-            <strong>{{ u.name }}</strong>
-            <span class="muted">({{ u.email }})</span>
-          </li>
-        }
-      </ul>
-    }
-  </div>
-</section>
+    <div class="list">
+      @if (usersList.length === 0) {
+        <p class="muted">No users yet.</p>
+      } @else {
+        <ul>
+          @for (u of usersList; track u.id) {
+            <li>
+              <strong>{{ u.name }}</strong>
+              <span class="muted">({{ u.email }})</span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </section>
+}
 

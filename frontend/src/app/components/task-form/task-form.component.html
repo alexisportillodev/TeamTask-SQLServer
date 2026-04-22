@@ -1,9 +1,4 @@
-<section class="card">
-  <header class="header">
-    <h2>New task</h2>
-    <p class="muted">Initial status is always <strong>Pending</strong>.</p>
-  </header>
-
+@if (isFormOnly()) {
   <form class="form" [formGroup]="form" (ngSubmit)="submit()">
     <label class="field">
       <span>Title *</span>
@@ -30,9 +25,47 @@
       <input type="text" formControlName="additionalData" placeholder='{"priority":"High"}' />
     </label>
 
-    <button class="btn" type="submit" [disabled]="form.invalid || isSubmitting()">
+    <button class="btn btn-submit" type="submit" [disabled]="form.invalid || isSubmitting()">
       Create task
     </button>
   </form>
-</section>
+} @else {
+  <section class="card">
+    <header class="header">
+      <h2>New task</h2>
+      <p class="muted">Initial status is always <strong>Pending</strong>.</p>
+    </header>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+      <label class="field">
+        <span>Title *</span>
+        <input type="text" formControlName="title" placeholder="Fix onboarding flow" />
+      </label>
+
+      <label class="field">
+        <span>Description</span>
+        <input type="text" formControlName="description" placeholder="Optional details" />
+      </label>
+
+      <label class="field">
+        <span>User *</span>
+        <select formControlName="userId">
+          <option [ngValue]="null">Select a user</option>
+          @for (u of usersList; track u.id) {
+            <option [ngValue]="u.id">{{ u.name }} ({{ u.email }})</option>
+          }
+        </select>
+      </label>
+
+      <label class="field">
+        <span>AdditionalData (JSON)</span>
+        <input type="text" formControlName="additionalData" placeholder='{"priority":"High"}' />
+      </label>
+
+      <button class="btn" type="submit" [disabled]="form.invalid || isSubmitting()">
+        Create task
+      </button>
+    </form>
+  </section>
+}
 
