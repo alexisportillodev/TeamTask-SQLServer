@@ -1,0 +1,56 @@
+<section class="card">
+  <header class="header">
+    <h2>Tasks</h2>
+    <div class="actions">
+      <label class="filter">
+        <span>Status</span>
+        <select [value]="statusFilter" (change)="onFilterChange($event)">
+          <option value="">All</option>
+          <option value="Pending">Pending</option>
+          <option value="InProgress">InProgress</option>
+          <option value="Done">Done</option>
+        </select>
+      </label>
+      <button type="button" class="btn btn-secondary" (click)="refresh()">Refresh</button>
+    </div>
+  </header>
+
+  @if (list.length === 0) {
+    <p class="muted">No tasks yet.</p>
+  } @else {
+    <div class="table">
+      <div class="row head">
+        <div>Title</div>
+        <div>User</div>
+        <div>Status</div>
+        <div>Change</div>
+      </div>
+
+      @for (t of list; track t.id) {
+        <div class="row">
+          <div class="title">
+            <strong>{{ t.title }}</strong>
+            @if (t.description) {
+              <div class="muted small">{{ t.description }}</div>
+            }
+          </div>
+          <div class="muted">{{ userLabel(t.userId) }}</div>
+          <div>
+            <span class="badge" [class.pending]="t.status === 'Pending'" [class.progress]="t.status === 'InProgress'"
+              [class.done]="t.status === 'Done'">
+              {{ t.status }}
+            </span>
+          </div>
+          <div>
+            <select [value]="t.status" (change)="onStatusChange(t.id, $event)">
+              <option value="Pending">Pending</option>
+              <option value="InProgress">InProgress</option>
+              <option value="Done">Done</option>
+            </select>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>
+
