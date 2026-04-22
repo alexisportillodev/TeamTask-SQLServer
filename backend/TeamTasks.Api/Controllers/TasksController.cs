@@ -26,7 +26,17 @@ public sealed class TasksController : ControllerBase
                 return BadRequest(new { error = result.Error });
             }
 
-            return Ok(result.Data);
+            var task = result.Data;
+
+            var response = new
+            {
+                task.Id,
+                task.Title,
+                task.Status,
+                task.UserId
+            };
+
+            return Ok(response);
         }
         catch
         {
