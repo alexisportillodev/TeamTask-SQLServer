@@ -6,9 +6,9 @@
         <span>Status</span>
         <select [value]="statusFilter" (change)="onFilterChange($event)">
           <option value="">All</option>
-          <option value="Pending">Pending</option>
-          <option value="InProgress">InProgress</option>
-          <option value="Done">Done</option>
+          <option value="0">Pending</option>
+          <option value="1">In Progress</option>
+          <option value="2">Done</option>
         </select>
       </label>
       <button type="button" class="btn btn-secondary" (click)="refresh()">Refresh</button>
@@ -23,7 +23,6 @@
         <div>Title</div>
         <div>User</div>
         <div>Status</div>
-        <div>Change</div>
       </div>
 
       @for (t of list; track t.id) {
@@ -34,18 +33,22 @@
               <div class="muted small">{{ t.description }}</div>
             }
           </div>
-          <div class="muted">{{ userLabel(t.userId) }}</div>
-          <div>
-            <span class="badge" [class.pending]="t.status === 'Pending'" [class.progress]="t.status === 'InProgress'"
-              [class.done]="t.status === 'Done'">
-              {{ t.status }}
-            </span>
+
+          <div class="muted">
+            {{ userLabel(t.userId) }}
           </div>
+
           <div>
-            <select [value]="t.status" (change)="onStatusChange(t.id, $event)">
-              <option value="Pending">Pending</option>
-              <option value="InProgress">InProgress</option>
-              <option value="Done">Done</option>
+            <select
+              [ngModel]="t.status"
+              (ngModelChange)="changeStatus(t.id, $event)"
+              [class.pending]="t.status === 0"
+              [class.progress]="t.status === 1"
+              [class.done]="t.status === 2"
+            >
+              <option [ngValue]="0">Pending</option>
+              <option [ngValue]="1">In Progress</option>
+              <option [ngValue]="2">Done</option>
             </select>
           </div>
         </div>
@@ -53,4 +56,3 @@
     </div>
   }
 </section>
-

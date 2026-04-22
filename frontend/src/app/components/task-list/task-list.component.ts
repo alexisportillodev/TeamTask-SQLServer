@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { UserService } from '../../services/user.service';
 import { TaskStatus } from '../../models/task';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.css',
 })
@@ -34,8 +35,8 @@ export class TaskListComponent implements OnInit {
   }
 
   onFilterChange(event: Event) {
-    const value = (event.target as HTMLSelectElement | null)?.value ?? '';
-    this.setFilter((value as TaskStatus | '') ?? '');
+    const value = (event.target as HTMLSelectElement).value;
+    this.setFilter(value === '' ? '' : (+value as TaskStatus));
   }
 
   get list() {
@@ -56,8 +57,7 @@ export class TaskListComponent implements OnInit {
   }
 
   onStatusChange(id: number, event: Event) {
-    const value = (event.target as HTMLSelectElement | null)?.value ?? 'Pending';
+    const value = +(event.target as HTMLSelectElement).value;
     this.changeStatus(id, value as TaskStatus);
   }
 }
-

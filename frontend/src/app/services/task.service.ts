@@ -24,8 +24,13 @@ export class TaskService {
 
   readonly filteredTasks = computed(() => {
     const filter = this.statusFilter();
-    if (!filter) return this.tasks();
-    return this.tasks().filter((t) => t.status === filter);
+    const tasks = this.tasks();
+
+    if (filter === '') {
+      return tasks;
+    }
+
+    return tasks.filter(t => t.status === filter);
   });
 
   loadTasks() {
