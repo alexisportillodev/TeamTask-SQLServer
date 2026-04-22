@@ -8,6 +8,9 @@
     <label class="field">
       <span>Email *</span>
       <input type="email" formControlName="email" placeholder="jane@company.com" />
+      @if (errorMessage()) {
+        <span class="error">{{ errorMessage() }}</span>
+      }
     </label>
 
     <button class="btn btn-submit" type="submit" [disabled]="form.invalid || isSubmitting()">

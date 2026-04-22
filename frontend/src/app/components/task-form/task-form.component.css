@@ -112,6 +112,14 @@ select option {
   color: rgba(255, 255, 255, 0.65);
 }
 
+.error {
+  color: #ef4444;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 8px;
+  grid-column: 1 / -1;
+}
+
 @media (max-width: 900px) {
   .form {
     grid-template-columns: 1fr;

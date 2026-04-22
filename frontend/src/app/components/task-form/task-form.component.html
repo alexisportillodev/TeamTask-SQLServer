@@ -28,6 +28,10 @@
     <button class="btn btn-submit" type="submit" [disabled]="form.invalid || isSubmitting()">
       Create task
     </button>
+
+    @if (errorMessage()) {
+      <span class="error">{{ errorMessage() }}</span>
+    }
   </form>
 } @else {
   <section class="card">
@@ -65,6 +69,10 @@
       <button class="btn" type="submit" [disabled]="form.invalid || isSubmitting()">
         Create task
       </button>
+
+      @if (errorMessage()) {
+        <span class="error">{{ errorMessage() }}</span>
+      }
     </form>
   </section>
 }

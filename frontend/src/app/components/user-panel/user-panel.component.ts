@@ -16,6 +16,7 @@ export class UserPanelComponent {
   readonly onClose = input<() => void>(() => {});
   readonly isFormOnly = input<boolean>(false);
   readonly isSubmitting = signal(false);
+  readonly errorMessage = signal<string>('');
 
   readonly form = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -33,6 +34,7 @@ export class UserPanelComponent {
   submit() {
     if (this.form.invalid || this.isSubmitting()) return;
     this.isSubmitting.set(true);
+    this.errorMessage.set('');
 
     const dto = this.form.getRawValue();
     this.users.createUser(dto).subscribe({
@@ -41,7 +43,11 @@ export class UserPanelComponent {
         this.isSubmitting.set(false);
         this.onClose()();
       },
-      error: () => this.isSubmitting.set(false),
+      error: (err) => {
+        this.isSubmitting.set(false);
+        const errorMsg = err.error?.error || err.message || 'An error occurred';
+        this.errorMessage.set(errorMsg);
+      },
     });
   }
 }
