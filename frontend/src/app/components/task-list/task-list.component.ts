@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { UserService } from '../../services/user.service';
@@ -11,11 +11,19 @@ import { TaskStatus } from '../../models/task';
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.css',
 })
-export class TaskListComponent {
+export class TaskListComponent implements OnInit {
   private readonly tasks = inject(TaskService);
   private readonly users = inject(UserService);
 
-  readonly statuses: (TaskStatus | '')[] = ['', 'Pending', 'InProgress', 'Done'];
+  readonly filterOptions = computed(() => {
+    const allStatuses = new Set<TaskStatus | ''>(['']);
+    this.tasks.tasks().forEach(t => allStatuses.add(t.status));
+    return Array.from(allStatuses).sort();
+  });
+
+  ngOnInit() {
+    this.refresh();
+  }
 
   get statusFilter() {
     return this.tasks.statusFilter();
