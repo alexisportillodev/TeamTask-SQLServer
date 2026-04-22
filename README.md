@@ -1,124 +1,95 @@
-# 🗄️ Base de Datos – TeamTasks
+# TeamTasks (SQL Server + .NET 10)
 
-## 📌 Descripción
+API simple para gestión de **usuarios** y **tareas** usando **SQL Server** y **.NET 10 Web API**.
 
-Este proyecto implementa el modelo de base de datos para un sistema de gestión de tareas, permitiendo registrar usuarios y administrar tareas asociadas, incluyendo funcionalidades de filtrado, estados y manejo de información adicional en formato JSON.
+## Avance
 
----
+- **Base de datos**: script `DBSetup_TeamTasks.sql` (tablas `Users` y `Tasks`, índice `IX_Tasks_UserId_Status`, validación JSON en `AdditionalData`)
+- **Backend** (`backend/`):
+  - Arquitectura simple en capas: `Controllers`, `Services`, `Repositories`, `DTOs`, `Models`
+  - Endpoints implementados:
+    - `POST /api/users`
+    - `GET /api/users`
+    - `POST /api/tasks`
+    - `GET /api/tasks`
+    - `PUT /api/tasks/{id}/status`
+  - Reglas de negocio:
+    - `Title` obligatorio
+    - `UserId` debe existir
+    - estado inicial: `Pending`
+    - no se permite `Pending → Done`
+  - Tests unitarios: regla de transición de estado (`TaskStatusRules`)
 
-## 🧱 Modelo de Datos
+## Requisitos
 
-### 🔹 Tabla: Users
+- **.NET SDK 10**
+- **SQL Server** (o **LocalDB**) + SSMS (o cualquier cliente SQL)
 
-Almacena la información de los usuarios del sistema.
+## Iniciar en local
 
-* **Id**: Identificador único (PK)
-* **Name**: Nombre del usuario (obligatorio)
-* **Email**: Correo electrónico (obligatorio, único)
-* **CreatedAt**: Fecha de creación
+### 1) Crear la base de datos
 
----
+Ejecuta el script:
 
-### 🔹 Tabla: Tasks
+- `DBSetup_TeamTasks.sql`
 
-Almacena las tareas asignadas a los usuarios.
+Esto crea la base de datos `TeamTasks` y sus tablas.
 
-* **Id**: Identificador único (PK)
-* **Title**: Título de la tarea (obligatorio)
-* **Description**: Descripción de la tarea
-* **UserId**: Usuario asignado (FK a Users)
-* **Status**: Estado de la tarea
-  Valores permitidos:
+### 2) Configurar la cadena de conexión
 
-  * `Pending`
-  * `InProgress`
-  * `Done`
-* **CreatedAt**: Fecha de creación
-* **AdditionalData**: Información adicional en formato JSON
+Edita `backend/TeamTasks.Api/appsettings.json`:
 
----
+- **LocalDB** (ejemplo):
+  - `Server=(localdb)\\MSSQLLocalDB;Database=TeamTasks;Trusted_Connection=True;`
+- **SQL Server** (Windows Auth, ejemplo):
+  - `Server=localhost;Database=TeamTasks;Trusted_Connection=True;TrustServerCertificate=True`
+- **SQL Server** (usuario/clave, ejemplo):
+  - `Server=localhost;Database=TeamTasks;User Id=sa;Password=TU_PASSWORD;TrustServerCertificate=True`
 
-## 🔗 Relaciones
+### 3) Ejecutar la API
 
-* Una tarea pertenece a un usuario
-* Relación: `Tasks.UserId → Users.Id`
+Desde la raíz del repo:
 
----
+```bash
+dotnet run --project backend/TeamTasks.Api
+```
 
-## ⚡ Índices
+### 4) Probar rápido (ejemplos)
 
-Se creó un índice para optimizar consultas por usuario y estado:
+Crear usuario:
 
-* `IX_Tasks_UserId_Status`
+```http
+POST /api/users
+Content-Type: application/json
 
----
+{ "name": "Alex", "email": "alex@test.com" }
+```
 
-## 🧠 Manejo de JSON
+Crear tarea (estado inicial siempre `Pending`):
 
-Se implementa una columna `AdditionalData` para almacenar información adicional en formato JSON.
+```http
+POST /api/tasks
+Content-Type: application/json
 
-### ✔ Validación
-
-Se utiliza la función `ISJSON` para asegurar que el contenido sea válido.
-
-### ✔ Ejemplo de estructura JSON
-
-```json
 {
-  "priority": "High",
-  "estimatedDate": "2026-04-25",
-  "tags": ["backend", "api"]
+  "title": "Primera tarea",
+  "description": "Demo",
+  "userId": 1,
+  "additionalData": "{\"priority\":\"High\"}"
 }
 ```
 
-### ✔ Consulta usando JSON
+Actualizar estado (no permite `Pending -> Done` directo):
 
-```sql
-SELECT 
-    Title,
-    JSON_VALUE(AdditionalData, '$.priority') AS Priority
-FROM Tasks
-WHERE JSON_VALUE(AdditionalData, '$.priority') = 'High';
+```http
+PUT /api/tasks/1/status
+Content-Type: application/json
+
+{ "status": "InProgress" }
 ```
 
----
+## Tests
 
-## 🔍 Consulta de tareas
-
-Consulta que permite:
-
-* Filtrar por usuario
-* Filtrar por estado (opcional)
-* Ordenar por fecha de creación
-
-```sql
-DECLARE @UserId INT = 1;
-DECLARE @Status VARCHAR(20) = NULL;
-
-SELECT *
-FROM Tasks
-WHERE UserId = @UserId
-AND (@Status IS NULL OR Status = @Status)
-ORDER BY CreatedAt DESC;
+```bash
+dotnet test backend/TeamTasks.slnx -c Release
 ```
-
----
-
-## ▶️ Ejecución
-
-1. Ejecutar el script `DBSetup.sql` en SQL Server
-2. Verificar creación de tablas:
-
-   * Users
-   * Tasks
-3. Ejecutar las consultas de prueba incluidas
-
----
-
-## 📌 Notas
-
-* Se priorizó una estructura simple y alineada al requerimiento de la prueba técnica.
-* El manejo de reglas de negocio (como validaciones de estado) se implementa en el backend.
-* El uso de JSON permite flexibilidad para almacenar información adicional sin modificar el esquema.
-
----
